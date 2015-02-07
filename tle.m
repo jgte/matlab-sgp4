@@ -9,22 +9,17 @@ global opsmode
 % add operation smode for afspc (a) or improved (i)
 opsmode='a';
 
-% //typerun = 'c' compare 1 year of full satcat data
-% //typerun = 'v' verification run, requires modified elm file with
-% //typerun = 'm' maunual operation- either mfe, epoch, or dayof yr
-% //              start stop and delta times
-typerun = 'm';
-typeinput = '20140101120000'
 whichconst = 72;
 rad = 180.0 / pi;
 
-% // input 2-line element set file
-infilename = 'test.tle'
-longstr=loadtle(infilename);
+norad='32789';
 
-startdate=struct('year',2014,'mon',12,'day',31,'hr',12,'min',00,'sec',00);
-stopdate =struct('year',2014,'mon',12,'day',31,'hr',13,'min',00,'sec',00);
+startdate=datenum(2014,12,31,12,00,00);
+stopdate =datenum(2014,12,31,12,10,00);
 deltamin=0.1;
+
+% get TLE from space-track.org
+longstr=get_tle(norad,startdate);
 
 global idebug dbgfile
 
@@ -38,16 +33,16 @@ end
 satrec = twoline2rv( whichconst,longstr);
 
 %get start/stop mfe
-startmfe=struct3mfe(startdate,satrec.jdsatepoch)
-stopmfe =struct3mfe(stopdate, satrec.jdsatepoch)
+startmfe=datenum3mfe(startdate,satrec.jdsatepoch);
+stopmfe =datenum3mfe(stopdate, satrec.jdsatepoch);
 
 fprintf(1,' %d\n', satrec.satnum);
 
 % // call the propagator to get the initial state vector value
 [satrec, ro ,vo] = sgp4 (satrec,  0.0);
 
-fprintf(1, ' %16.8f %16.8f %16.8f %16.8f %12.9f %12.9f %12.9f\n',...
-  satrec.t,ro(1),ro(2),ro(3),vo(1),vo(2),vo(3));
+% fprintf(1, ' %16.8f %16.8f %16.8f %16.8f %12.9f %12.9f %12.9f\n',...
+%   satrec.t,ro(1),ro(2),ro(3),vo(1),vo(2),vo(3));
 
 tsince = startmfe;
 

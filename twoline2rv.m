@@ -152,9 +152,9 @@ function satrec = twoline2rv(whichconst, longstr)
 
 %     // ---- find standard orbital elements ----
     satrec.inclo = satrec.inclo  * deg2rad;
-    satrec.nodeo = satrec.nodeo * deg2rad;
+    satrec.nodeo = satrec.nodeo  * deg2rad;
     satrec.argpo = satrec.argpo  * deg2rad;
-    satrec.mo    = satrec.mo     *deg2rad;
+    satrec.mo    = satrec.mo     * deg2rad;
 
     satrec.alta = satrec.a*(1.0 + satrec.ecco) - 1.0;
     satrec.altp = satrec.a*(1.0 - satrec.ecco) - 1.0;
