@@ -1,4 +1,4 @@
-function tle=get_tle(norad,date,username,password)
+function tle=get_tle(norad,datestart,username,password)
 
 if ~exist('username','var') || isempty(password) || ~exist(password) || isempty(password)
   if isempty(dir('get_tle.credentials'))
@@ -15,8 +15,7 @@ if ~exist('username','var') || isempty(password) || ~exist(password) || isempty(
   password=password(1:end-1);
 end
 
-
-datestart=floor(date);
+datestart=floor(datestart);
 datestop=datestart+1;
 
 URL='https://www.space-track.org/ajaxauth/login';
@@ -37,8 +36,14 @@ out=urlread(URL,'Post',post,'Timeout',5);
 
 nlidx=findstr(out,10);
 if numel(nlidx) ~= 2
-  error([mfilename,': expecting to find 2 newline characters in tle, not ',num2str(numel(nlidx)),'. ',...
-    'Try other newline characters. Debug needed!'])
+  disp(['TLE not found: ', datestr(datestart)])
+  disp(post{6})
+  datestart=datestart-1;
+  disp(['Trying TLE of: ', datestr(datestart)])
+  tle=get_tle(norad,datestart,username,password);
+  % error([mfilename,': expecting to find 2 newline characters in tle, not ',num2str(numel(nlidx)),'. ',...
+  %   'Try other newline characters. Debug needed!'])
+  return
 end
 
 tle{1}=out(1:nlidx(1)-1);
